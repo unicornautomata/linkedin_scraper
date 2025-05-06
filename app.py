@@ -4,7 +4,7 @@ from googlesearch import search
 app = Flask(__name__)
 
 def get_linkedin_profile(name, company):
-    query = f'site:linkedin.com/in/ "{name}" "{company}"'
+    query = f'site:linkedin.com/in/ AND "{name}" AND "{company}"'
     search_results = search(query, num_results=10)
     linkedin_links = [url for url in search_results if "linkedin.com/in/" in url]
     if linkedin_links:
