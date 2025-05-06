@@ -1,14 +1,31 @@
 from flask import Flask, request, jsonify
-from googlesearch import search
+import requests
 
 app = Flask(__name__)
 
+API_KEY = 'AIzaSyAauNezGIq4pomGCGkPw2ACFb-h3VakTy0'        # Replace with your Google API key
+CSE_ID = 'c1a53408d168f4ea8'    # Your public CSE ID
+
 def get_linkedin_profile(name, company):
-    query = f'site:linkedin.com/in/ AND "{name}" AND "{company}"'
-    search_results = search(query, num_results=10)
-    linkedin_links = [url for url in search_results if "linkedin.com/in/" in url]
+    query = f'linkedin.com {name} {company}'
+    url = 'https://www.googleapis.com/customsearch/v1'
+    params = {
+        'key': API_KEY,
+        'cx': CSE_ID,
+        'q': query,
+        'num': 10
+    }
+
+    response = requests.get(url, params=params)
+    results = response.json()
+
+    if 'items' not in results:
+        return None
+
+    linkedin_links = [item['link'] for item in results['items'] if "linkedin.com/in/" in item['link']]
+
     if linkedin_links:
-        return linkedin_links[0]
+        return linkedin_links[0]  # Return first LinkedIn profile link
     else:
         return None
 
